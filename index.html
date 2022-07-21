@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>App 1</title>
+  </head>
+  <body>
+    <!-- <div id="bbb"></div> -->
+    <div id="aaa"></div>
+
+    <template hfz mount="#bbb"> bbbabb </template>
+    <script>
+      setTimeout(() => {
+        const e = document.createElement("div");
+        e.id = "bbb";
+        document.body.appendChild(e);
+        // $HFZ_MOUNT_TEMPLATES();
+      }, 1000);
+    </script>
+
+    <template
+      hfz
+      mount="#aaa"
+      import:flex-box:box="1"
+      import:remote-ok="./r-comp.html"
+      :data="{bb: 12232, hobby: 1}"
+    >
+      <remote-ok :a="bb"></remote-ok>
+      <div>baej</div>
+      <block @mounted="bb = 123123434">bbss</block>
+      aaaa {{bb}} {{hobby}}
+      <comp2></comp2>
+      <button @click="hello">ewe</button>
+      <!-- <box> flex-box </box> -->
+
+      <script>
+        export default {
+          data: {
+            bb: 234234,
+            hobby: 4,
+          },
+          methods: {
+            hello() {
+              this.hobby = 6;
+            },
+          },
+        };
+      </script>
+
+      <!-- <hfc-btn1 :name="'afei'" :hobby="hobby" :wakadA="bb" @hatEseFE="hello">
+        <div>demo hfc</div>
+
+        <template #header="{ a }">
+          <h1>slot {{a}} {{bb}}</h1>
+        </template>
+        <template #heAderr="{ a }">
+          <h1>slot {{a}} {{bb}}</h1>
+        </template>
+      </hfc-btn1> -->
+    </template>
+
+    <template hfz name="comp2">
+      <div>comp 2</div>
+    </template>
+
+    <script src="./dist/index.js"></script>
+  </body>
+</html>
