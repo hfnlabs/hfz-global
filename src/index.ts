@@ -6,8 +6,7 @@ import loadScript from "./load-script";
 import { initSharing, registerShareModule, loadWfm } from "./wfm";
 import strToJsVar from "./str-to-js-var";
 
-window.$HFC_NPM_CDN_URL =
-  window.$HFC_NPM_CDN_URL || "https://npm.hyper.fun/npm";
+window.$HFC_NPM_CDN_URL = window.$HFC_NPM_CDN_URL || "https://npm.hyper.fun";
 window.$HFC_WFM_CONTAINERS = window.$HFC_WFM_CONTAINERS || {};
 
 interface TeleportItem {
@@ -20,7 +19,9 @@ let app: IVue.App;
 let data: any;
 let hfcToVue: any;
 
+let inited = false;
 export function run() {
+  if (inited) return Promise.resolve();
   return Promise.all([
     importVue(),
     import(/* webpackMode: "eager" */ "hfc-to-vue/dist/to-vue"),
@@ -57,12 +58,13 @@ export function run() {
     // mount to ghost element
     app.mount(document.createElement("template"));
 
+    inited = true;
     mountTemplates();
   });
 }
 
 export function mountTemplates() {
-  if (!app) {
+  if (!inited) {
     console.warn("[hfz] not init yet");
     return;
   }
