@@ -63,6 +63,11 @@
       <div>comp 2</div>
     </template>
 
-    <script src="./dist/index.js"></script>
+    <script src="./dist/index.js" notrun></script>
+    <script>
+      window.hfzGlobal.run().then(() => {
+        console.log("run");
+      });
+    </script>
   </body>
 </html>

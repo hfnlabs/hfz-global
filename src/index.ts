@@ -210,9 +210,13 @@ function buildRemoteVueHfc(src: string) {
 }
 
 // run when directly use script tag
-if (typeof exports !== "object") {
-  run().catch((err: any) => {
-    console.warn("[hfz] faild to init");
-    console.error(err);
-  });
+if (document.currentScript) {
+  const notRun = document.currentScript.getAttribute("notrun") !== null;
+
+  if (!notRun) {
+    run().catch((err: any) => {
+      console.warn("[hfz] faild to init");
+      console.error(err);
+    });
+  }
 }
