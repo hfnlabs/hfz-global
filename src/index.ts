@@ -210,8 +210,8 @@ function buildRemoteVueHfc(src: string) {
 }
 
 // run when directly use script tag
-if (document.currentScript) {
-  const notRun = document.currentScript.getAttribute("notrun") !== null;
+if (typeof exports !== "object" && document.currentScript) {
+  const notRun = document.currentScript.getAttribute("auto-run") === "false";
 
   if (!notRun) {
     run().catch((err: any) => {

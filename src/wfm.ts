@@ -23,7 +23,7 @@ export function registerShareModule(
   if (!activeVersion || !activeVersion.loaded)
     versions[version] = {
       get: () => Promise.resolve(() => instance),
-      from: "hfc",
+      from: "hfzGlobal",
       eager: false,
     };
 }
