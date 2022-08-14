@@ -59,11 +59,13 @@ function run() {
 }
 
 function mountTemplates() {
-  const templates =
-    document.querySelectorAll<HTMLTemplateElement>("template[hfz]");
+  const templates: HTMLTemplateElement[] = [].slice.call(
+    document.getElementsByTagName("template")
+  );
 
   const teleports: any[] = [];
   templates.forEach((template) => {
+    if (!template.hasAttribute("hfz")) return;
     const component = templateToComponent(template);
 
     if (component.name) {
@@ -86,7 +88,9 @@ function mountTemplates() {
     template.parentNode?.removeChild(template);
   });
 
-  Array.prototype.push.apply(data.teleports, teleports);
+  if (teleports.length) {
+    Array.prototype.push.apply(data.teleports, teleports);
+  }
 }
 
 function templateToComponent(template: HTMLTemplateElement) {
