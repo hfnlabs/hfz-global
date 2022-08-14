@@ -16,10 +16,6 @@ module.exports = {
     concatenateModules: true,
   },
   output: {
-    library: {
-      name: "hfzGlobal",
-      type: "umd",
-    },
     filename: min ? "./index.min.js" : "./index.js",
   },
 };

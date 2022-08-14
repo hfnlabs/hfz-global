@@ -5,6 +5,7 @@ import loadScript from "./load-script";
 // import loadStyleLink from "./load-style-link";
 import { initSharing, registerShareModule, loadWfm } from "./wfm";
 import strToJsVar from "./str-to-js-var";
+import HfcToVue from "hfc-to-vue/dist/to-vue";
 
 window.$HFC_NPM_CDN_URL = window.$HFC_NPM_CDN_URL || "https://npm.hyper.fun";
 window.$HFC_WFM_CONTAINERS = window.$HFC_WFM_CONTAINERS || {};
@@ -19,19 +20,14 @@ let app: IVue.App;
 let data: any;
 let hfcToVue: any;
 
-let inited = false;
-export function run() {
-  if (inited) return Promise.resolve();
-  return Promise.all([
-    importVue(),
-    import(/* webpackMode: "eager" */ "hfc-to-vue/dist/to-vue"),
-    domReady,
-    initSharing(),
-  ]).then(([_vue, _hfcToVue]) => {
+let isReady = false;
+function run() {
+  if (isReady) return Promise.resolve();
+  return Promise.all([importVue(), initSharing(), domReady]).then(([_vue]) => {
     registerShareModule("vue", window.$HFZ_VUE.version, window.$HFZ_VUE);
 
     Vue = _vue;
-    hfcToVue = _hfcToVue.default(Vue);
+    hfcToVue = HfcToVue(Vue);
     data = Vue.reactive({
       teleports: [],
     });
@@ -58,23 +54,13 @@ export function run() {
     // mount to ghost element
     app.mount(document.createElement("template"));
 
-    inited = true;
-    mountTemplates();
+    isReady = true;
   });
 }
 
-export function mountTemplates() {
-  if (!inited) {
-    console.warn("[hfz] not init yet");
-    return;
-  }
-
+function mountTemplates() {
   const templates =
     document.querySelectorAll<HTMLTemplateElement>("template[hfz]");
-
-  if (!templates.length) {
-    return;
-  }
 
   const teleports: any[] = [];
   templates.forEach((template) => {
@@ -90,7 +76,6 @@ export function mountTemplates() {
     if (template.hasAttribute("mount")) {
       target = document.querySelector(template.getAttribute("mount")!);
 
-      // do nothing
       if (!target) return;
     } else {
       target = document.createElement("div");
@@ -209,14 +194,27 @@ function buildRemoteVueHfc(src: string) {
   });
 }
 
-// run when directly use script tag
-if (typeof exports !== "object" && document.currentScript) {
-  const notRun = document.currentScript.getAttribute("auto-run") === "false";
+run().then(() => {
+  mountTemplates();
 
-  if (!notRun) {
-    run().catch((err: any) => {
-      console.warn("[hfz] faild to init");
-      console.error(err);
-    });
-  }
-}
+  new MutationObserver((mutations) => {
+    let hasAdd;
+    for (const mutation of mutations) {
+      if (mutation.addedNodes.length) {
+        hasAdd = true;
+        break;
+      }
+    }
+
+    if (hasAdd) {
+      mountTemplates();
+    }
+  }).observe(document.body, {
+    subtree: true,
+    childList: true,
+    attributes: false,
+    characterData: false,
+    attributeOldValue: false,
+    characterDataOldValue: false,
+  });
+});

@@ -8,7 +8,7 @@
     <!-- <div id="bbb"></div> -->
     <div id="aaa"></div>
 
-    <template hfz mount="#bbb"> bbbabb </template>
+    <template hfz mount="#bbb">bbbabb</template>
     <script>
       setTimeout(() => {
         const e = document.createElement("div");
@@ -63,11 +63,14 @@
       <div>comp 2</div>
     </template>
 
-    <script src="./dist/index.js" auto-run="false"></script>
     <script>
-      window.hfzGlobal.run().then(() => {
-        console.log("run");
-      });
+      setTimeout(() => {
+        const d = document.createElement("div");
+        d.innerHTML = "<template hfz> <div>lazy hfz template</div> </template>";
+        document.body.appendChild(d);
+      }, 2000);
     </script>
+
+    <script src="./dist/index.js"></script>
   </body>
 </html>
