@@ -1,5 +1,5 @@
-import loadScript from "./load-script";
 import type Vue from "vue";
+import loadScript from "./load-script";
 
 function isValidVue(v: typeof Vue) {
   return (
@@ -19,10 +19,13 @@ export default function () {
       resolve(window.$HFZ_VUE);
       return;
     }
+
     loadScript(
-      window.$HFC_NPM_CDN_URL + "/vue@3.2.37/dist/vue.global.prod.js"
+      "https://repo.hyper.fun/share/vue/dist/vue.esm-browser.prod.js@3.2.40.js"
     ).then(() => {
-      window.$HFZ_VUE = window.Vue;
+      window.$HFZ_VUE =
+        window.$HFC_SHARE_DEP["vue/dist/vue.esm-browser.prod.js"];
+
       resolve(window.$HFZ_VUE);
     });
   });

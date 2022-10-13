@@ -1,14 +1,10 @@
 import type IVue from "vue";
 import importVue from "./import-vue";
 import domReady from "./dom-ready";
-import loadScript from "./load-script";
-// import loadStyleLink from "./load-style-link";
-import { initSharing, registerShareModule, loadWfm } from "./wfm";
+import { registerShareModule, loadHfc } from "./hfm";
 import strToJsVar from "./str-to-js-var";
 import HfcToVue from "hfc-to-vue/dist/to-vue";
-
-window.$HFC_NPM_CDN_URL = window.$HFC_NPM_CDN_URL || "https://npm.hyper.fun";
-window.$HFC_WFM_CONTAINERS = window.$HFC_WFM_CONTAINERS || {};
+import { debounce } from "./utils";
 
 interface TeleportItem {
   target: string;
@@ -23,14 +19,15 @@ let hfcToVue: any;
 let isReady = false;
 function run() {
   if (isReady) return Promise.resolve();
-  return Promise.all([importVue(), initSharing(), domReady]).then(([_vue]) => {
-    registerShareModule("vue", window.$HFZ_VUE.version, window.$HFZ_VUE);
-
+  return Promise.all([importVue(), domReady]).then(([_vue]) => {
     Vue = _vue;
+    registerShareModule("vue", Vue);
+
     hfcToVue = HfcToVue(Vue);
     data = Vue.reactive({
       teleports: [],
     });
+
     app = Vue.createApp({
       data() {
         return data;
@@ -122,7 +119,7 @@ function templateToComponent(template: HTMLTemplateElement) {
     const alias = arr[2];
     let versionOrPath = template.getAttribute(key)!;
     if (versionOrPath[0] === "." || versionOrPath[0] === "/") {
-      components[alias || name] = buildRemoteVueHfc(versionOrPath);
+      components[alias || name] = buildRemoteHfzTemplate(versionOrPath);
     } else {
       components[alias || name] = buildVueHfc(name, versionOrPath);
     }
@@ -146,21 +143,9 @@ function templateToComponent(template: HTMLTemplateElement) {
 function buildVueHfc(name: string, version?: string) {
   return Vue.defineAsyncComponent({
     loader() {
-      let target = "@hyper.fun/" + name;
-      if (version) target = target + "@" + version;
-
-      let cdnUrl = window.$HFC_NPM_CDN_URL;
-      const rewrite = (window as any)[`$HFC_CDN_REWRITE_${target}`];
-      if (rewrite) cdnUrl = rewrite;
-      const componentUrl = `${cdnUrl}/${target}/wfm/entry.js`;
-
-      return loadScript(componentUrl)
-        .then(() => {
-          // loadStyleLink(`${cdnUrl}/${target}/hfc.css`);
-          return loadWfm("@hyper.fun/" + name);
-        })
+      return loadHfc(name, version)
         .then((comp: any) => {
-          return hfcToVue(comp.default, true);
+          return hfcToVue(comp, true);
         })
         .catch((err) => {
           console.error(err);
@@ -171,7 +156,7 @@ function buildVueHfc(name: string, version?: string) {
   });
 }
 
-function buildRemoteVueHfc(src: string) {
+function buildRemoteHfzTemplate(src: string) {
   return Vue.defineAsyncComponent({
     loader() {
       return new Promise((resolve, reject) => {
@@ -201,6 +186,8 @@ function buildRemoteVueHfc(src: string) {
 run().then(() => {
   mountTemplates();
 
+  const tryMount = debounce(mountTemplates, 50);
+
   new MutationObserver((mutations) => {
     let hasAdd;
     for (const mutation of mutations) {
@@ -210,9 +197,7 @@ run().then(() => {
       }
     }
 
-    if (hasAdd) {
-      mountTemplates();
-    }
+    if (hasAdd) tryMount();
   }).observe(document.body, {
     subtree: true,
     childList: true,

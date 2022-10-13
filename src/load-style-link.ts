@@ -16,7 +16,7 @@ export default function loadStyleLink(src: string) {
       reject(new Error(`Failed to load ${src}`));
     };
 
-    const node = document.head || document.getElementsByTagName("head")[0];
-    node.appendChild(link);
+    const head = document.head || document.getElementsByTagName("head")[0];
+    head.appendChild(link);
   });
 }
