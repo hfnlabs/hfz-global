@@ -1,7 +1,7 @@
 import type Vue from "vue";
 import loadScript from "./load-script";
 
-function isValidVue(v: typeof Vue) {
+function checkVue(v: typeof Vue) {
   return (
     typeof v === "object" && v.version[0] === "3" && !!v.compile && !!v.Teleport
   );
@@ -14,14 +14,14 @@ export default function () {
       return;
     }
 
-    if (isValidVue(window.Vue)) {
+    if (checkVue(window.Vue)) {
       window.$HFZ_VUE = window.Vue;
       resolve(window.$HFZ_VUE);
       return;
     }
 
     loadScript(
-      "https://repo.hyper.fun/share/vue/dist/vue.esm-browser.prod.js@3.2.40.js"
+      "https://repo.hyper.fun/hfm/share/vue/dist/vue.esm-browser.prod.js@3.2.40.js"
     ).then(() => {
       window.$HFZ_VUE =
         window.$HFC_SHARE_DEP["vue/dist/vue.esm-browser.prod.js"];

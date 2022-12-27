@@ -18,7 +18,7 @@ export function loadHfc(name: string, version?: string): Promise<any> {
   if (!remotesMap[name]) remotesMap[name] = { inited: false };
 
   const remote = remotesMap[name];
-  if (remote.inited) return remote.lib;
+  if (remote.inited) return Promise.resolve(remote.lib);
 
   const entry = `${name}/${version}/hfm.js`;
   let cdnUrl = window.$HFC_CDN_URL;

@@ -102,6 +102,11 @@ function templateToComponent(template: HTMLTemplateElement) {
     template.content.removeChild(script);
   }
 
+  const style = template.content.querySelector("style");
+  if (style) {
+    document.head.appendChild(style);
+  }
+
   if (template.hasAttribute(":data") && !component.data) {
     component.data = strToJsVar(template.getAttribute(":data")!);
   }
