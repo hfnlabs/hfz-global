@@ -2,12 +2,12 @@ lockfileVersion: 5.4
 
 specifiers:
   esbuild: ^0.16.11
-  hfc-to-vue: ^1.3.11
+  hfc-to-vue: ^1.5.0
   vue: ^3.2.39
 
 devDependencies:
   esbuild: 0.16.11
-  hfc-to-vue: 1.3.11
+  hfc-to-vue: 1.5.0
   vue: 3.2.39
 
 packages:
@@ -358,8 +358,8 @@ packages:
     resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==}
     dev: true
 
-  /hfc-to-vue/1.3.11:
-    resolution: {integrity: sha512-77HavGoD5lTKssFzRO/EGlKOwKj4q+04Cft5zLJLYuCtlVdrxb+0kQQsI6vI5cSkYsN4ZtE/m600YMNQXv0fFw==}
+  /hfc-to-vue/1.5.0:
+    resolution: {integrity: sha512-v76Lka0PsnhR1l27UunjXDwKluq2er2E+W380Wv3sV+f7RdYsAottwnLCyXffE7xJ7Fs3GiKbmgev9N8V6jWqQ==}
     dev: true
 
   /magic-string/0.25.9:
